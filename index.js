@@ -26,8 +26,10 @@ app.get('/', function(req, res) {
 
 // Defines a schema for storing urls
 const urlSchema = new mongoose.Schema({
+  id: Number,
   url: String
 });
+
 // Defines a model for the url schema
 urlSchema.plugin(AutoIncrement, { inc_field: 'id' });
 
@@ -35,29 +37,46 @@ const Url = mongoose.model("Url", urlSchema);
 // Include autoincrement plugin
 
 
-//TODO write functions for Url creation
 async function createNewUrl(url){
   const sendingUrl = new Url({ url: `${url}`});
-  const promise = await sendingUrl.save();
-  return promise;
-};
+  return await sendingUrl.save().then((data) => console.log(data));
+}
+
+async function getUrl(wantedId){
+  console.log('getting urls...');
+  const query = Url.findOne({ id: wantedId }, 'id');
+  const promise = query.exec();
+  console.log("promise object is: " + promise);
+}
 
 // Start endpoints
+
+
+// GET endpoint for redirects using shortlinks
+app.get('/api/shorturl/:shortlink', function(req, res){
+  console.log('hit the shortlink...');
+  const index = req.params.shortlink;
+  
+  //res.redirect(urlObj.url);
+})
 
 // POST endpoint for submitting a new url
 app.post('/api/shorturl', function(req, res){
   if (dns.lookup(req.body.url, (err, addresses) => {
     if (err){ console.error(err); }
-    else { console.log(addresses) }
+    else { console.log("address is valid...") }
   })){
+    let returnedUrl;
     try{
-      createNewUrl(req.body.url);
+      // TODO write logic for if url already exists, for completeness's sake
+      returnedUrl =  createNewUrl(req.body.url);
     } catch(e){
       console.error(`Something went wrong: ${e}`);
     }
-    
+    console.log(returnedUrl);
     res.json({
-      original_url: `${req.body.url}`
+      original_url: `${req.body.url}`,
+      short_url: `${returnedUrl.id}`
     })
   } else {
     res.json({
