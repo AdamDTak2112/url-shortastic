@@ -28,7 +28,7 @@ const urlSchema = new mongoose.Schema({
   url: String
 });
 // Defines a model for the url schema
-const Model = mongoose.Model;
+
 const Url = mongoose.model("Url", urlSchema);
 
 //TODO write functions for Url creation
