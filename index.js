@@ -4,6 +4,10 @@ const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
 const dns = require('node:dns');
+const mongoose = require('mongoose');
+
+// Connect mongoose
+mongoose.connect(process.env.MONGO_URI);
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
@@ -18,23 +22,26 @@ app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
 
-let index = 1;
-
-const urlArr = [];
-
-// Your first API endpoint
-app.get('/api/hello', function(req, res) {
-  res.json({ greeting: 'hello API' });
+// Defines a schema for storing urls
+const urlSchema = new mongoose.Schema({
+  index: Number,
+  url: String
 });
+// Defines a model for the url schema
+const Model = mongoose.Model;
+const Url = mongoose.model("Url", urlSchema);
 
+//TODO write functions for Url creation
 
+// Start endpoints
 
+// POST endpoint for submitting a new url
 app.post('/api/shorturl', function(req, res){
   if (dns.lookup(req.body.url, (err, addresses) => {
     if (err){ console.error(err); }
     else { console.log(addresses) }
   })){
-    urlArr.push(req.body.url)
+    Url.create()
     res.json({
       original_url: `${req.body.url}`,
 
