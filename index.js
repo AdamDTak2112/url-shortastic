@@ -112,6 +112,6 @@ app.post('/api/shorturl', function(req, res){
   
 });
 
-app.listen(port, function() {
+app.listen(port | 3000, function() {
   console.log(`Listening on port ${port}`);
 });
