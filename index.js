@@ -36,6 +36,13 @@ urlSchema.plugin(AutoIncrement, { inc_field: 'id' });
 const Url = mongoose.model("Url", urlSchema);
 // Include autoincrement plugin
 
+function checkProtocol(str){
+  const httpRegex = /^https?:\/\/\S+(\/\S+)*(\/)?$/g;
+  return httpRegex.test(str)
+    ? str
+    : `http://${str}`;
+}
+
 
 async function createNewUrl(url){
   const sendingUrl = new Url({ url: `${url}`});
@@ -60,18 +67,21 @@ async function getUrl(wantedId){
 app.get('/api/shorturl/:shortlink', function(req, res, next){
   console.log('hit the shortlink...');
   const index = req.params.shortlink;
+  console.log('index = ' + index);
   const id = getUrl(index)
     .then(function(result, err){
       if (err){
+        console.log("hit the error");
         next(err);
       } else{
         console.log(result);
-        res.redirect(result.url);
+        const finalUrl = checkProtocol(result.url);
+        res.redirect(finalUrl);
       }
     })
     .catch(function(err){
       console.error(err);
-    })
+    });
   //res.redirect(urlObj.url);
 })
 
