@@ -44,19 +44,34 @@ async function createNewUrl(url){
 
 async function getUrl(wantedId){
   console.log('getting urls...');
-  const query = Url.findOne({ id: wantedId }, 'id');
-  const promise = query.exec();
-  console.log("promise object is: " + promise);
+  try {
+    const foundUrl = await Url.findOne({ id: wantedId });
+    console.log('foundUrl finished... ' + foundUrl);
+    return foundUrl;
+  } catch(e){
+    console.error('error finding that url... ' + e);
+  }
 }
 
 // Start endpoints
 
 
 // GET endpoint for redirects using shortlinks
-app.get('/api/shorturl/:shortlink', function(req, res){
+app.get('/api/shorturl/:shortlink', function(req, res, next){
   console.log('hit the shortlink...');
   const index = req.params.shortlink;
-  
+  const id = getUrl(index)
+    .then(function(result, err){
+      if (err){
+        next(err);
+      } else{
+        console.log(result);
+        res.redirect(result.url);
+      }
+    })
+    .catch(function(err){
+      console.error(err);
+    })
   //res.redirect(urlObj.url);
 })
 
@@ -68,6 +83,7 @@ app.post('/api/shorturl', function(req, res){
   })){
     let returnedUrl;
     try{
+      // TODO write logic to exclude https or http, append them later if wanted
       // TODO write logic for if url already exists, for completeness's sake
       returnedUrl =  createNewUrl(req.body.url);
     } catch(e){
