@@ -30,11 +30,13 @@ const urlSchema = new mongoose.Schema({
   url: String
 });
 
-// Defines a model for the url schema
+
+// Include autoincrement plugin
 urlSchema.plugin(AutoIncrement, { inc_field: 'id' });
 
+// Defines a model for the url schema
 const Url = mongoose.model("Url", urlSchema);
-// Include autoincrement plugin
+
 
 function checkProtocol(str){
   const httpRegex = /^https?:\/\/\S+(\/\S+)*(\/)?$/g;
@@ -82,7 +84,6 @@ app.get('/api/shorturl/:shortlink', function(req, res, next){
     .catch(function(err){
       console.error(err);
     });
-  //res.redirect(urlObj.url);
 })
 
 // POST endpoint for submitting a new url
@@ -112,6 +113,6 @@ app.post('/api/shorturl', function(req, res){
   
 });
 
-app.listen(port | 3000, function() {
+app.listen(port, function() {
   console.log(`Listening on port ${port}`);
 });
