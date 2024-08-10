@@ -17,6 +17,8 @@ ENV PORT=3000
 
 ENV MONGO_URI='mongodb+srv://adamtaksoftware:mVL305jVX1e5ratE@cluster0.xqizu0g.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
 
+ENV HEROKU_APP='url-shortify'
+
 
 WORKDIR /usr/src/app
 
