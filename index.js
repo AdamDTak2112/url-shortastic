@@ -12,7 +12,6 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 mongoose.connect(process.env.MONGO_URI);
 
 // Basic Configuration
-const port = process.env.PORT || 3000;
 
 app.use(cors());
 
@@ -112,6 +111,11 @@ app.post('/api/shorturl', function(req, res){
   }
   
 });
+
+let port = process.env.PORT;
+if(port == null || port == ""){
+  port = 3000;
+}
 
 app.listen(port, function() {
   console.log(`Listening on port ${port}`);
